@@ -4,7 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class StompBeginFrame extends StompFrame implements StompFrame.StompClientFrame {
+public class StompBeginFrame extends StompFrame implements StompFrame.Client {
 
     public static final String COMMAND = "BEGIN";
     public static final String TRANSACTION_HEADER = "transaction";

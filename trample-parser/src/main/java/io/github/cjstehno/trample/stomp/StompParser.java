@@ -23,9 +23,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static io.github.cjstehno.trample.stomp.ParserMode.*;
 import static lombok.AccessLevel.PRIVATE;
@@ -41,6 +41,29 @@ public class StompParser {
 
     // FIXME: sensible logging
 
+        /*
+       FIXME: impl
+       - client
+           SEND
+       - server
+           MESSAGE
+           ERROR
+    */
+
+    private static final Map<String, Supplier<StompFrame>> FRAMES = new HashMap<>() {{
+        put(StompConnectedFrame.COMMAND, StompConnectedFrame::new);
+        put(StompConnectFrame.COMMAND, StompConnectFrame::new);
+        put(StompStompFrame.COMMAND, StompStompFrame::new);
+        put(StompReceiptFrame.COMMAND, StompReceiptFrame::new);
+        put(StompDisconnectFrame.COMMAND, StompDisconnectFrame::new);
+        put(StompSubscribeFrame.COMMAND, StompSubscribeFrame::new);
+        put(StompUnsubscribeFrame.COMMAND, StompUnsubscribeFrame::new);
+        put(StompAckFrame.COMMAND, StompAckFrame::new);
+        put(StompNackFrame.COMMAND, StompNackFrame::new);
+        put(StompBeginFrame.COMMAND, StompBeginFrame::new);
+        put(StompCommitFrame.COMMAND, StompCommitFrame::new);
+        put(StompAbortFrame.COMMAND, StompAbortFrame::new);
+    }};
     private final ParserMode mode;
     private boolean ignoreIllegalFrame = false;
 
@@ -88,7 +111,7 @@ public class StompParser {
      * @throws IOException if there is a problem parsing the source
      */
     public List<StompFrame> parse(final String source) throws IOException {
-        try (val reader = new BufferedReader(new StringReader(source))) {
+        try (val reader = new BufferedReader(new StringReader(source), Math.min(source.length(), 8192))) {
             return parse(reader);
         }
     }
@@ -116,37 +139,22 @@ public class StompParser {
      * @throws IOException if there is a problem parsing the frames in the reader
      */
     public void read(final Reader reader, final Consumer<StompFrame> collector) throws IOException {
-        val lineReader = new LineReader(reader);
-        var line = lineReader.readLine(); // TODO: make this into an iterator?
+        val lineReader = ensureBuffered(reader);
+        val lineIterator = new LineIterator(lineReader);
 
-        while (line != null) {
-            val trimmed = line.trim();
+        while (lineIterator.hasNext()) {
+            val line = lineIterator.next();
+            val command = line.trim();
 
-            if (!trimmed.isEmpty()) {
-                val frame = switch (trimmed) {
-                    case StompConnectedFrame.COMMAND -> parseFrame(new StompConnectedFrame(), lineReader);
-                    case StompConnectFrame.COMMAND -> parseFrame(new StompConnectFrame(), lineReader);
-                    case StompStompFrame.COMMAND -> parseFrame(new StompStompFrame(), lineReader);
-                    case StompReceiptFrame.COMMAND -> parseFrame(new StompReceiptFrame(), lineReader);
-                    case StompDisconnectFrame.COMMAND -> parseFrame(new StompDisconnectFrame(), lineReader);
-                    case StompSubscribeFrame.COMMAND -> parseFrame(new StompSubscribeFrame(), lineReader);
-                    case StompUnsubscribeFrame.COMMAND -> parseFrame(new StompUnsubscribeFrame(), lineReader);
-                    case StompAckFrame.COMMAND -> parseFrame(new StompAckFrame(), lineReader);
-                    case StompNackFrame.COMMAND -> parseFrame(new StompNackFrame(), lineReader);
-                    case StompBeginFrame.COMMAND -> parseFrame(new StompBeginFrame(), lineReader);
-                    case StompCommitFrame.COMMAND -> parseFrame(new StompCommitFrame(), lineReader);
-                    case StompAbortFrame.COMMAND -> parseFrame(new StompAbortFrame(), lineReader);
-                    /*
-                        FIXME: impl
-                        - client
-                            SEND
-                            ABORT
-                        - server
-                            MESSAGE
-                            ERROR
-                     */
-                    default -> throw new UnsupportedOperationException("Unsupported command: " + line);
-                };
+            if (!command.isEmpty()) {
+                val frame = FRAMES.getOrDefault(
+                        command,
+                        () -> {
+                            throw new RuntimeException("Unexpected frame command: " + command);
+                        }
+                    )
+                    .get()
+                    .readFrom(lineReader);
 
                 if (mode.allowsFrame(frame)) {
                     log.info("Parsed frame: {}", frame);
@@ -162,56 +170,39 @@ public class StompParser {
                     throw new IOException("Illegal frame (" + frame.getCommand() + ") for mode (" + mode + ").");
                 }
             }
-
-            line = lineReader.readLine();
         }
     }
 
-    private StompFrame parseFrame(final StompFrame frame, final LineReader lineReader) throws IOException {
-        log.info("Parsing-Frame: {}", frame);
-
-        // headers
-        log.info("... parsing headers...");
-        var line = lineReader.readLine();
-
-        while (!line.isBlank()) {
-            val headerName = line.substring(0, line.indexOf(":"));
-            val headerValue = line.substring(line.indexOf(":") + 1);
-            frame.setHeader(headerName, headerValue);
-
-            line = lineReader.readLine();
-        }
-
-        // body
-        log.info("... parsing body....");
-        var buffer = new StringBuilder();
-
-        var ch = lineReader.read();
-        while (ch != '\0') {
-            if (ch != '\r') {
-                buffer.append(ch);
-            }
-            ch = lineReader.read();
-        }
-
-        frame.setBody(buffer.toString());
-
-        return frame;
+    // FIXME: move to util
+    public static BufferedReader ensureBuffered(final Reader reader) {
+        return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
     }
 
-    private static class LineReader {
+    @RequiredArgsConstructor(access = PRIVATE)
+    private static class LineIterator implements Iterator<String> {
+
+        private static final int READ_LIMIT = 15;
         private final BufferedReader reader;
 
-        private LineReader(final Reader reader) {
-            this.reader = reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
+        @Override public boolean hasNext() {
+            return peekLine() != null;
         }
 
-        String readLine() throws IOException {
-            return reader.readLine();
+        @Override public String next() {
+            return peekLine();
         }
 
-        char read() throws IOException {
-            return (char) reader.read();
+        private String peekLine() {
+            try {
+                reader.mark(READ_LIMIT);
+                val line = reader.readLine();
+                reader.reset();
+                return line;
+
+            } catch (IOException ioe) {
+                // FIXME: other?
+                throw new RuntimeException(ioe);
+            }
         }
     }
 }

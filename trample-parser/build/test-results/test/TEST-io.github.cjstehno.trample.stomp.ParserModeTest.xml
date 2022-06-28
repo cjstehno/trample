@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.github.cjstehno.trample.stomp.ParserModeTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-06-28T14:19:03" hostname="inhouse" time="0.079">
-  <properties/>
-  <testcase name="allowingFrame()" classname="io.github.cjstehno.trample.stomp.ParserModeTest" time="0.079"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

@@ -18,8 +18,6 @@ package io.github.cjstehno.trample.stomp;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Set;
-
 import static lombok.AccessLevel.PRIVATE;
 
 /**
@@ -28,7 +26,7 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor(access = PRIVATE)
 enum ParserMode {
 
-    CLIENT(StompFrame.StompClientFrame.class),
+    CLIENT(StompFrame.Client.class),
 
     SERVER(StompFrame.StompServerFrame.class),
 

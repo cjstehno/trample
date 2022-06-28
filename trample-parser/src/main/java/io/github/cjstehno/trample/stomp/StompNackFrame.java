@@ -6,7 +6,7 @@ import lombok.ToString;
 import static io.github.cjstehno.trample.stomp.StompSubscribeFrame.ID_HEADER;
 
 @ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class StompNackFrame extends StompFrame implements StompFrame.StompClientFrame {
+public class StompNackFrame extends StompFrame implements StompFrame.Client {
 
     public static final String COMMAND = "NACK";
 

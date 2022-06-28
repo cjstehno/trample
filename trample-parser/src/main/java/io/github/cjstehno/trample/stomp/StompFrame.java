@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2022 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,7 @@ package io.github.cjstehno.trample.stomp;
 
 import lombok.*;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -43,12 +41,47 @@ abstract class StompFrame {
         return headers.get(name);
     }
 
-    public static interface StompClientFrame {
+    public interface Client {
         // FIXME: userful?
     }
 
-    public static interface StompServerFrame {
+    public interface StompServerFrame {
         // FIXME: userful?
+    }
+
+    public StompFrame readFrom(final Reader reader) throws IOException {
+        val lineReader = StompParser.ensureBuffered(reader);
+
+        // command - already processed (just verify)
+        var line = lineReader.readLine();
+        if( !line.trim().equals(command)){
+            throw new IllegalArgumentException("The frame command does not match the line.");
+        }
+
+        // headers
+        line = lineReader.readLine();
+        while (!line.isBlank()) {
+            val headerName = line.substring(0, line.indexOf(":"));
+            val headerValue = line.substring(line.indexOf(":") + 1);
+            setHeader(headerName, headerValue);
+
+            line = lineReader.readLine();
+        }
+
+        // body
+        var buffer = new StringBuilder();
+
+        var ch = lineReader.read();
+        while (ch != '\0') {
+            if (ch != '\r') {
+                buffer.append(ch);
+            }
+            ch = lineReader.read();
+        }
+
+        setBody(buffer.toString());
+
+        return this;
     }
 
     public void writeTo(final Writer writer) throws IOException {

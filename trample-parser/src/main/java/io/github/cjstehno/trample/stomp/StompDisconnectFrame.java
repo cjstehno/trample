@@ -4,7 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class StompDisconnectFrame extends StompFrame implements StompFrame.StompClientFrame {
+public class StompDisconnectFrame extends StompFrame implements StompFrame.Client {
 
     public static final String COMMAND = "DISCONNECT";
     public static final String RECEIPT_HEADER = "receipt";
