@@ -28,6 +28,7 @@ import static lombok.AccessLevel.PACKAGE;
 @RequiredArgsConstructor(access = PACKAGE) @ToString @EqualsAndHashCode
 abstract class StompFrame {
 
+    // FIXME: provide other headers (names at least)
     // FIXME: test each frame type reading and writing
 
     @Getter private final String command;

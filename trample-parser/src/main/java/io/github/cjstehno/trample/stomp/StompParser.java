@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2022 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -117,9 +117,7 @@ public class StompParser {
      */
     public void read(final Reader reader, final Consumer<StompFrame> collector) throws IOException {
         val lineReader = new LineReader(reader);
-        var line = lineReader.readLine();
-
-        log.info("Line: {}", line);
+        var line = lineReader.readLine(); // TODO: make this into an iterator?
 
         while (line != null) {
             val trimmed = line.trim();
@@ -127,15 +125,37 @@ public class StompParser {
             if (!trimmed.isEmpty()) {
                 val frame = switch (trimmed) {
                     case StompConnectedFrame.COMMAND -> parseFrame(new StompConnectedFrame(), lineReader);
+                    case StompConnectFrame.COMMAND -> parseFrame(new StompConnectFrame(), lineReader);
+                    case StompStompFrame.COMMAND -> parseFrame(new StompStompFrame(), lineReader);
+                    case StompReceiptFrame.COMMAND -> parseFrame(new StompReceiptFrame(), lineReader);
+                    case StompDisconnectFrame.COMMAND -> parseFrame(new StompDisconnectFrame(), lineReader);
+                    case StompSubscribeFrame.COMMAND -> parseFrame(new StompSubscribeFrame(), lineReader);
+                    case StompUnsubscribeFrame.COMMAND -> parseFrame(new StompUnsubscribeFrame(), lineReader);
+                    case StompAckFrame.COMMAND -> parseFrame(new StompAckFrame(), lineReader);
+                    case StompNackFrame.COMMAND -> parseFrame(new StompNackFrame(), lineReader);
+                    case StompBeginFrame.COMMAND -> parseFrame(new StompBeginFrame(), lineReader);
+                    case StompCommitFrame.COMMAND -> parseFrame(new StompCommitFrame(), lineReader);
+                    case StompAbortFrame.COMMAND -> parseFrame(new StompAbortFrame(), lineReader);
+                    /*
+                        FIXME: impl
+                        - client
+                            SEND
+                            ABORT
+                        - server
+                            MESSAGE
+                            ERROR
+                     */
                     default -> throw new UnsupportedOperationException("Unsupported command: " + line);
                 };
 
                 if (mode.allowsFrame(frame)) {
-                    log.info("Finished frame: {}", frame);
+                    log.info("Parsed frame: {}", frame);
                     collector.accept(frame);
+
                 } else if (ignoreIllegalFrame) {
-                    // FIXME: ignore it
-                    log.debug("Parsed illegal frame ({}) for mode ({}) - ignoring it.", frame, mode);
+                    // we're just going to ignore it
+                    log.info("Parsed illegal frame ({}) for mode ({}) - ignoring it.", frame, mode);
+
                 } else {
                     log.debug("Parsed illegal frame ({}) for mode ({}) - throwing exception.", frame, mode);
                     // TODO: custom exception - IllegalFrameException

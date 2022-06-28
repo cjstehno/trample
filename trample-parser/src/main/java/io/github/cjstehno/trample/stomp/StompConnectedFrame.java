@@ -15,6 +15,10 @@
  */
 package io.github.cjstehno.trample.stomp;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
 public class StompConnectedFrame extends StompFrame implements StompFrame.StompServerFrame {
 
     public static final String COMMAND = "CONNECTED";
