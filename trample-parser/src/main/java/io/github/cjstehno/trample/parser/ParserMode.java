@@ -16,26 +16,27 @@
 package io.github.cjstehno.trample.parser;
 
 import io.github.cjstehno.trample.stomp.BaseFrame;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-import static lombok.AccessLevel.PRIVATE;
+import io.github.cjstehno.trample.stomp.FrameType;
+import io.github.cjstehno.trample.stomp.FrameType.Type;
+import lombok.val;
 
 /**
  * TODO: document
  */
-@RequiredArgsConstructor(access = PRIVATE)
 enum ParserMode {
 
-    CLIENT(BaseFrame.ClientFrame.class),
-
-    SERVER(BaseFrame.ServerFrame.class),
-
-    ALL(BaseFrame.class);
-
-    @Getter private final Class<?> frameClass;
+    CLIENT, SERVER, ALL;
 
     boolean allowsFrame(final BaseFrame frame) {
-        return frameClass.isAssignableFrom(frame.getClass());
+        val frameClass = frame.getClass();
+        return switch (this) {
+            case CLIENT -> extractFrameType(frameClass) == Type.CLIENT;
+            case SERVER -> extractFrameType(frameClass) == Type.SERVER;
+            default -> true;
+        };
+    }
+
+    private static Type extractFrameType(final Class<?> frameClass) {
+        return frameClass.getAnnotation(FrameType.class).value();
     }
 }

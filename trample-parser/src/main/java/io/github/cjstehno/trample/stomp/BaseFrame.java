@@ -24,11 +24,12 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static lombok.AccessLevel.PACKAGE;
 
 @RequiredArgsConstructor(access = PACKAGE) @ToString @EqualsAndHashCode
-public abstract class BaseFrame {
+public abstract sealed class BaseFrame permits AbortFrame, AckFrame, BeginFrame, CommitFrame, ConnectFrame, ConnectedFrame, DisconnectFrame, ErrorFrame, MessageFrame, NackFrame, ReceiptFrame, SendFrame, StompFrame, SubscribeFrame, UnsubscribeFrame {
 
     @Getter private final String command;
     @Getter private final Map<String, String> headers = new LinkedHashMap<>();
@@ -45,21 +46,19 @@ public abstract class BaseFrame {
         return headers.get(name);
     }
 
-    public interface ClientFrame {
-        // TODO: could these markers be done with annotations?
-        // This is just a marker.
-    }
-
-    public interface ServerFrame {
-        // This is just a marker
-    }
-
-    // NOTE: the command line is not parsed (it was already done by the parser)
+    // NOTE: the command line is optional (may have been parsed off already)
     public BaseFrame readFrom(final Reader reader) throws IOException {
         val lineReader = StompParser.ensureBuffered(reader);
 
-        // headers
         var line = lineReader.readLine();
+
+        // command (may not be present)
+        if (line.trim().equals(command)) {
+            // skip and continue
+            line = lineReader.readLine();
+        }
+
+        // headers
         while (!line.isBlank()) {
             val headerName = line.substring(0, line.indexOf(":"));
             val headerValue = line.substring(line.indexOf(":") + 1);

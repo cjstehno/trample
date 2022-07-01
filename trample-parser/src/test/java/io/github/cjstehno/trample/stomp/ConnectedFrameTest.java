@@ -15,15 +15,85 @@
  */
 package io.github.cjstehno.trample.stomp;
 
-import static org.junit.jupiter.api.Assertions.*;
+import lombok.val;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+
+import static io.github.cjstehno.trample.stomp.StompHeaders.VERSION;
+import static io.github.cjstehno.trample.testing.Checks.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ConnectedFrameTest {
 
-    // FIXME: equals, hash, tostring
-    // FIXME: command & headers
-    // FIXME: message type
-    // FIXME: version
-    // FIXME: no body
-    // FIXME: mesage parsing
-    // FIXME: mesage writing
+    private static ConnectedFrame connectedFrame() {
+        return new ConnectedFrame("1.2");
+    }
+
+    @Test void properties() {
+        val frame = connectedFrame();
+
+        assertEquals("CONNECTED", frame.getCommand());
+
+        assertEquals(1, frame.getHeaders().size());
+        assertEquals("1.2", frame.getHeaders().get(VERSION));
+        assertEquals("1.2", frame.getHeader(VERSION));
+        assertEquals("1.2", frame.getVersion());
+
+        assertEquals("", frame.getBody());
+    }
+
+    @Test void settingVersion() {
+        val frame = new ConnectedFrame();
+        assertNull(frame.getVersion());
+
+        frame.setVersion("1.1");
+        assertEquals("1.1", frame.getVersion());
+
+        // should ignore setting once set
+        frame.setVersion("1.0");
+        assertEquals("1.1", frame.getVersion());
+    }
+
+    @Test void equalsAndHash() {
+        checkEqualsAndHashCode(connectedFrame(), connectedFrame());
+    }
+
+    @Test void string() {
+        checkToString(
+            "ConnectedFrame(super=BaseFrame(command=CONNECTED, headers={version=1.2}, body=))",
+            connectedFrame()
+        );
+    }
+
+    @Test void readWrite() throws IOException {
+        checkFrameWriteRead(
+            connectedFrame(),
+            """
+                CONNECTED
+                version:1.2
+                            
+                \0"""
+        );
+    }
+
+    @Test void read() throws IOException {
+        checkFrameRead(
+            new ConnectedFrame("1.2"),
+            """
+                CONNECTED
+                version:1.2
+                            
+                \0"""
+        );
+
+        checkFrameRead(
+            new ConnectedFrame("1.2"),
+            """
+                version:1.2
+                            
+                \0"""
+        );
+    }
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.github.cjstehno.trample.parser.StompParserTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2022-07-01T12:57:54" hostname="inhouse" time="0.298">
+<testsuite name="io.github.cjstehno.trample.parser.StompParserTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2022-07-01T13:50:39" hostname="inhouse" time="0.246">
   <properties/>
-  <testcase name="parsingSingleMessage()" classname="io.github.cjstehno.trample.parser.StompParserTest" time="0.296"/>
+  <testcase name="parsingSingleMessage()" classname="io.github.cjstehno.trample.parser.StompParserTest" time="0.243"/>
   <testcase name="writingConnected()" classname="io.github.cjstehno.trample.parser.StompParserTest" time="0.001"/>
-  <system-out><![CDATA[07:57:54.705 [Test worker] INFO io.github.cjstehno.trample.parser.StompParser - Parsed frame: ConnectedFrame(super=BaseFrame(command=CONNECTED, headers={version=1.2}, body=))
+  <system-out><![CDATA[08:50:39.653 [Test worker] INFO io.github.cjstehno.trample.parser.StompParser - Parsed frame: ConnectedFrame(super=BaseFrame(command=CONNECTED, headers={version=1.2}, body=))
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

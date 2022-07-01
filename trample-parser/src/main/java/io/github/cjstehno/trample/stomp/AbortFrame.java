@@ -18,10 +18,11 @@ package io.github.cjstehno.trample.stomp;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import static io.github.cjstehno.trample.stomp.FrameType.Type.CLIENT;
 import static io.github.cjstehno.trample.stomp.StompHeaders.TRANSACTION;
 
-@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class AbortFrame extends BaseFrame implements BaseFrame.ClientFrame {
+@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true) @FrameType(CLIENT)
+public final class AbortFrame extends BaseFrame {
 
     public static final String COMMAND = "ABORT";
 

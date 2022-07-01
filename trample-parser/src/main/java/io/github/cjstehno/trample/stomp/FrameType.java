@@ -15,31 +15,19 @@
  */
 package io.github.cjstehno.trample.stomp;
 
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import static io.github.cjstehno.trample.stomp.FrameType.Type.CLIENT;
-import static io.github.cjstehno.trample.stomp.StompHeaders.ID;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true) @FrameType(CLIENT)
-public final class NackFrame extends BaseFrame {
+@Retention(RUNTIME)
+@Target(ElementType.TYPE)
+public @interface FrameType {
 
-    public static final String COMMAND = "NACK";
+    Type value();
 
-    public NackFrame() {
-        super(COMMAND);
-    }
-
-    public NackFrame(final String id) {
-        this();
-        setId(id);
-    }
-
-    public void setId(final String id) {
-        setHeader(ID, id);
-    }
-
-    public String getId() {
-        return getHeader(ID);
+    enum Type {
+        CLIENT, SERVER;
     }
 }

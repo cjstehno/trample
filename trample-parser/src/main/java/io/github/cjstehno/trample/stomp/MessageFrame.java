@@ -19,11 +19,12 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.val;
 
+import static io.github.cjstehno.trample.stomp.FrameType.Type.SERVER;
 import static io.github.cjstehno.trample.stomp.StompHeaders.*;
 import static java.lang.Integer.parseInt;
 
-@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class MessageFrame extends BaseFrame implements BaseFrame.ServerFrame {
+@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true) @FrameType(SERVER)
+public final class MessageFrame extends BaseFrame {
 
     public static final String COMMAND = "MESSAGE";
     public static final String MESSAGE_ID_HEADER = "message-id";

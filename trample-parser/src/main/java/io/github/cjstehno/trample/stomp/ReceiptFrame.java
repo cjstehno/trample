@@ -18,10 +18,11 @@ package io.github.cjstehno.trample.stomp;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import static io.github.cjstehno.trample.stomp.FrameType.Type.SERVER;
 import static io.github.cjstehno.trample.stomp.StompHeaders.RECEIPT_ID;
 
-@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class ReceiptFrame extends BaseFrame implements BaseFrame.ServerFrame {
+@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true) @FrameType(SERVER)
+public final class ReceiptFrame extends BaseFrame {
 
     public static final String COMMAND = "RECEIPT";
 

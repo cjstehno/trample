@@ -1,1 +1,1 @@
-¯07:57:54.705 [Test worker] INFO io.github.cjstehno.trample.parser.StompParser - Parsed frame: ConnectedFrame(super=BaseFrame(command=CONNECTED, headers={version=1.2}, body=))
+¯08:50:39.653 [Test worker] INFO io.github.cjstehno.trample.parser.StompParser - Parsed frame: ConnectedFrame(super=BaseFrame(command=CONNECTED, headers={version=1.2}, body=))

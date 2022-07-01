@@ -18,11 +18,12 @@ package io.github.cjstehno.trample.stomp;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import static io.github.cjstehno.trample.stomp.FrameType.Type.CLIENT;
 import static io.github.cjstehno.trample.stomp.StompHeaders.DESTINATION;
 import static io.github.cjstehno.trample.stomp.StompHeaders.ID;
 
-@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class SubscribeFrame extends BaseFrame implements BaseFrame.ClientFrame {
+@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true) @FrameType(CLIENT)
+public final class SubscribeFrame extends BaseFrame {
 
     public static final String COMMAND = "SUBSCRIBE";
 

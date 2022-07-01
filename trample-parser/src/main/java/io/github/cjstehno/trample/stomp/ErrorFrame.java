@@ -19,12 +19,13 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.val;
 
+import static io.github.cjstehno.trample.stomp.FrameType.Type.SERVER;
 import static io.github.cjstehno.trample.stomp.StompHeaders.CONTENT_LENGTH;
 import static io.github.cjstehno.trample.stomp.StompHeaders.CONTENT_TYPE;
 import static java.lang.Integer.parseInt;
 
-@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class ErrorFrame extends BaseFrame implements BaseFrame.ServerFrame {
+@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true) @FrameType(SERVER)
+public final class ErrorFrame extends BaseFrame {
 
     public static final String COMMAND = "ERROR";
     public static final String MESSAGE_HEADER = "message";

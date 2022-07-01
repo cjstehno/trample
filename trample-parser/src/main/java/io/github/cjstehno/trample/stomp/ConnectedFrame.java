@@ -18,10 +18,11 @@ package io.github.cjstehno.trample.stomp;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import static io.github.cjstehno.trample.stomp.FrameType.Type.SERVER;
 import static io.github.cjstehno.trample.stomp.StompHeaders.VERSION;
 
-@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class ConnectedFrame extends BaseFrame implements BaseFrame.ServerFrame {
+@ToString(callSuper = true) @EqualsAndHashCode(callSuper = true) @FrameType(SERVER)
+public final class ConnectedFrame extends BaseFrame {
 
     public static final String COMMAND = "CONNECTED";
 
