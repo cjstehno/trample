@@ -26,15 +26,15 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor(access = PRIVATE)
 enum ParserMode {
 
-    CLIENT(StompFrame.Client.class),
+    CLIENT(BaseFrame.ClientFrame.class),
 
-    SERVER(StompFrame.StompServerFrame.class),
+    SERVER(BaseFrame.ServerFrame.class),
 
-    ALL(StompFrame.class);
+    ALL(BaseFrame.class);
 
     @Getter private final Class<?> frameClass;
 
-    boolean allowsFrame(final StompFrame frame) {
+    boolean allowsFrame(final BaseFrame frame) {
         return frameClass.isAssignableFrom(frame.getClass());
     }
 }

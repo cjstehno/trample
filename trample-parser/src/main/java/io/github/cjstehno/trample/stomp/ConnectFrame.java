@@ -22,15 +22,15 @@ import static io.github.cjstehno.trample.stomp.StompHeaders.ACCEPT_VERSION;
 import static io.github.cjstehno.trample.stomp.StompHeaders.HOST;
 
 @ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class StompFrame extends BaseFrame implements BaseFrame.ClientFrame {
+public class ConnectFrame extends BaseFrame implements BaseFrame.ClientFrame {
 
-    public static final String COMMAND = "STOMP";
+    public static final String COMMAND = "CONNECT";
 
-    public StompFrame() {
+    public ConnectFrame() {
         super(COMMAND);
     }
 
-    public StompFrame(final String host, final String acceptVersion) {
+    public ConnectFrame(final String host, final String acceptVersion) {
         this();
         setHost(host);
         setAcceptVersion(acceptVersion);

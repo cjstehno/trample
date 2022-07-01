@@ -15,22 +15,16 @@
  */
 package io.github.cjstehno.trample.stomp;
 
-import lombok.val;
-import org.junit.jupiter.api.Test;
+public interface StompHeaders {
 
-import static io.github.cjstehno.trample.stomp.ParserMode.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-class ParserModeTest {
-
-    // TODO: more testing
-
-    @Test void allowingFrame() {
-        val frame = new ConnectedFrame();
-
-        assertTrue(ALL.allowsFrame(frame));
-        assertTrue(SERVER.allowsFrame(frame));
-        assertFalse(CLIENT.allowsFrame(frame));
-    }
+    String VERSION = "version";
+    String ACCEPT_VERSION = "accept-version";
+    String HOST = "host";
+    String RECEIPT_ID = "receipt-id";
+    String RECEIPT = "receipt";
+    String DESTINATION = "destination";
+    String ID = "id";
+    String TRANSACTION = "transaction";
+    String CONTENT_TYPE = "content-type";
+    String CONTENT_LENGTH = "content-length";
 }

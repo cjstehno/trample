@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2022 Christopher J. Stehno
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,28 +41,22 @@ public class StompParser {
 
     // FIXME: sensible logging
 
-        /*
-       FIXME: impl
-       - client
-           SEND
-       - server
-           MESSAGE
-           ERROR
-    */
-
-    private static final Map<String, Supplier<StompFrame>> FRAMES = new HashMap<>() {{
-        put(StompConnectedFrame.COMMAND, StompConnectedFrame::new);
-        put(StompConnectFrame.COMMAND, StompConnectFrame::new);
-        put(StompStompFrame.COMMAND, StompStompFrame::new);
-        put(StompReceiptFrame.COMMAND, StompReceiptFrame::new);
-        put(StompDisconnectFrame.COMMAND, StompDisconnectFrame::new);
-        put(StompSubscribeFrame.COMMAND, StompSubscribeFrame::new);
-        put(StompUnsubscribeFrame.COMMAND, StompUnsubscribeFrame::new);
-        put(StompAckFrame.COMMAND, StompAckFrame::new);
-        put(StompNackFrame.COMMAND, StompNackFrame::new);
-        put(StompBeginFrame.COMMAND, StompBeginFrame::new);
-        put(StompCommitFrame.COMMAND, StompCommitFrame::new);
-        put(StompAbortFrame.COMMAND, StompAbortFrame::new);
+    private static final Map<String, Supplier<BaseFrame>> FRAMES = new HashMap<>() {{
+        put(ConnectedFrame.COMMAND, ConnectedFrame::new);
+        put(ConnectFrame.COMMAND, ConnectFrame::new);
+        put(StompFrame.COMMAND, StompFrame::new);
+        put(ReceiptFrame.COMMAND, ReceiptFrame::new);
+        put(DisconnectFrame.COMMAND, DisconnectFrame::new);
+        put(SubscribeFrame.COMMAND, SubscribeFrame::new);
+        put(UnsubscribeFrame.COMMAND, UnsubscribeFrame::new);
+        put(AckFrame.COMMAND, AckFrame::new);
+        put(NackFrame.COMMAND, NackFrame::new);
+        put(BeginFrame.COMMAND, BeginFrame::new);
+        put(CommitFrame.COMMAND, CommitFrame::new);
+        put(AbortFrame.COMMAND, AbortFrame::new);
+        put(SendFrame.COMMAND, SendFrame::new);
+        put(MessageFrame.COMMAND, MessageFrame::new);
+        put(ErrorFrame.COMMAND, ErrorFrame::new);
     }};
     private final ParserMode mode;
     private boolean ignoreIllegalFrame = false;
@@ -110,7 +104,7 @@ public class StompParser {
      * @return a list of parsed frames
      * @throws IOException if there is a problem parsing the source
      */
-    public List<StompFrame> parse(final String source) throws IOException {
+    public List<BaseFrame> parse(final String source) throws IOException {
         try (val reader = new BufferedReader(new StringReader(source), Math.min(source.length(), 8192))) {
             return parse(reader);
         }
@@ -124,8 +118,8 @@ public class StompParser {
      * @return a list of parsed frames
      * @throws IOException if there is a problem parsing the frames in the reader
      */
-    public List<StompFrame> parse(final Reader reader) throws IOException {
-        val frames = new ArrayList<StompFrame>();
+    public List<BaseFrame> parse(final Reader reader) throws IOException {
+        val frames = new ArrayList<BaseFrame>();
         read(reader, frames::add);
         return frames;
     }
@@ -138,7 +132,7 @@ public class StompParser {
      * @param collector the consumer of the extracted frames
      * @throws IOException if there is a problem parsing the frames in the reader
      */
-    public void read(final Reader reader, final Consumer<StompFrame> collector) throws IOException {
+    public void read(final Reader reader, final Consumer<BaseFrame> collector) throws IOException {
         val lineReader = ensureBuffered(reader);
         val lineIterator = new LineIterator(lineReader);
 
@@ -181,28 +175,21 @@ public class StompParser {
     @RequiredArgsConstructor(access = PRIVATE)
     private static class LineIterator implements Iterator<String> {
 
-        private static final int READ_LIMIT = 15;
         private final BufferedReader reader;
+        private String line;
 
         @Override public boolean hasNext() {
-            return peekLine() != null;
+            try {
+                line = reader.readLine();
+                return line != null;
+            } catch (IOException ioe) {
+                // FIXME: better?
+                throw new RuntimeException(ioe);
+            }
         }
 
         @Override public String next() {
-            return peekLine();
-        }
-
-        private String peekLine() {
-            try {
-                reader.mark(READ_LIMIT);
-                val line = reader.readLine();
-                reader.reset();
-                return line;
-
-            } catch (IOException ioe) {
-                // FIXME: other?
-                throw new RuntimeException(ioe);
-            }
+            return line;
         }
     }
 }

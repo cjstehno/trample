@@ -18,26 +18,27 @@ package io.github.cjstehno.trample.stomp;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import static io.github.cjstehno.trample.stomp.StompHeaders.TRANSACTION;
+
 @ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class StompConnectedFrame extends StompFrame implements StompFrame.StompServerFrame {
+public class CommitFrame extends BaseFrame implements BaseFrame.ClientFrame {
 
-    public static final String COMMAND = "CONNECTED";
-    public static final String VERSION_HEADER = "version";
+    public static final String COMMAND = "COMMIT";
 
-    public StompConnectedFrame() {
+    public CommitFrame() {
         super(COMMAND);
     }
 
-    public StompConnectedFrame(final String version) {
+    public CommitFrame(final String transaction) {
         this();
-        setVersion(version);
+        setTransaction(transaction);
     }
 
-    public void setVersion(final String version) {
-        setHeader(VERSION_HEADER, version);
+    public void setTransaction(final String transaction) {
+        setHeader(TRANSACTION, transaction);
     }
 
-    public String getVersion() {
-        return getHeader(VERSION_HEADER);
+    public String getTransaction() {
+        return getHeader(TRANSACTION);
     }
 }

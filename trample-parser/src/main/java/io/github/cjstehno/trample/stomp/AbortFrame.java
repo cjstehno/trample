@@ -18,37 +18,27 @@ package io.github.cjstehno.trample.stomp;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import static io.github.cjstehno.trample.stomp.StompHeaders.ACCEPT_VERSION;
-import static io.github.cjstehno.trample.stomp.StompHeaders.HOST;
+import static io.github.cjstehno.trample.stomp.StompHeaders.TRANSACTION;
 
 @ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class StompFrame extends BaseFrame implements BaseFrame.ClientFrame {
+public class AbortFrame extends BaseFrame implements BaseFrame.ClientFrame {
 
-    public static final String COMMAND = "STOMP";
+    public static final String COMMAND = "ABORT";
 
-    public StompFrame() {
+    public AbortFrame() {
         super(COMMAND);
     }
 
-    public StompFrame(final String host, final String acceptVersion) {
+    public AbortFrame(final String transaction) {
         this();
-        setHost(host);
-        setAcceptVersion(acceptVersion);
+        setTransaction(transaction);
     }
 
-    public void setHost(final String value) {
-        setHeader(HOST, value);
+    public void setTransaction(final String transaction) {
+        setHeader(TRANSACTION, transaction);
     }
 
-    public String getHost() {
-        return getHeader(HOST);
-    }
-
-    public void setAcceptVersion(final String value) {
-        setHeader(ACCEPT_VERSION, value);
-    }
-
-    public String getAcceptVersion() {
-        return getHeader(ACCEPT_VERSION);
+    public String getTransaction() {
+        return getHeader(TRANSACTION);
     }
 }

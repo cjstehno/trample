@@ -18,37 +18,28 @@ package io.github.cjstehno.trample.stomp;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import static io.github.cjstehno.trample.stomp.StompHeaders.ACCEPT_VERSION;
-import static io.github.cjstehno.trample.stomp.StompHeaders.HOST;
+import static io.github.cjstehno.trample.stomp.StompHeaders.RECEIPT_ID;
 
 @ToString(callSuper = true) @EqualsAndHashCode(callSuper = true)
-public class StompFrame extends BaseFrame implements BaseFrame.ClientFrame {
+public class ReceiptFrame extends BaseFrame implements BaseFrame.ServerFrame {
 
-    public static final String COMMAND = "STOMP";
+    public static final String COMMAND = "RECEIPT";
 
-    public StompFrame() {
+
+    public ReceiptFrame() {
         super(COMMAND);
     }
 
-    public StompFrame(final String host, final String acceptVersion) {
+    public ReceiptFrame(final String receiptId) {
         this();
-        setHost(host);
-        setAcceptVersion(acceptVersion);
+        setReceiptId(receiptId);
     }
 
-    public void setHost(final String value) {
-        setHeader(HOST, value);
+    public void setReceiptId(final String value) {
+        setHeader(RECEIPT_ID, value);
     }
 
-    public String getHost() {
-        return getHeader(HOST);
-    }
-
-    public void setAcceptVersion(final String value) {
-        setHeader(ACCEPT_VERSION, value);
-    }
-
-    public String getAcceptVersion() {
-        return getHeader(ACCEPT_VERSION);
+    public String getReceiptId() {
+        return getHeader(RECEIPT_ID);
     }
 }
