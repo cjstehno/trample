@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cjstehno.trample.stomp;
+package io.github.cjstehno.trample.parser;
 
+import io.github.cjstehno.trample.stomp.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,7 +28,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static io.github.cjstehno.trample.stomp.ParserMode.*;
+import static io.github.cjstehno.trample.parser.ParserMode.*;
 import static lombok.AccessLevel.PRIVATE;
 
 /**

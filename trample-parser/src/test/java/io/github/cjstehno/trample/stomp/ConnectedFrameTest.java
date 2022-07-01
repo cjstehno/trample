@@ -15,26 +15,15 @@
  */
 package io.github.cjstehno.trample.stomp;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static lombok.AccessLevel.PRIVATE;
+class ConnectedFrameTest {
 
-/**
- * TODO: document
- */
-@RequiredArgsConstructor(access = PRIVATE)
-enum ParserMode {
-
-    CLIENT(BaseFrame.ClientFrame.class),
-
-    SERVER(BaseFrame.ServerFrame.class),
-
-    ALL(BaseFrame.class);
-
-    @Getter private final Class<?> frameClass;
-
-    boolean allowsFrame(final BaseFrame frame) {
-        return frameClass.isAssignableFrom(frame.getClass());
-    }
+    // FIXME: equals, hash, tostring
+    // FIXME: command & headers
+    // FIXME: message type
+    // FIXME: version
+    // FIXME: no body
+    // FIXME: mesage parsing
+    // FIXME: mesage writing
 }

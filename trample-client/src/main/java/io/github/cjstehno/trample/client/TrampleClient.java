@@ -13,24 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cjstehno.trample.stomp;
+package io.github.cjstehno.trample.client;
 
-import lombok.val;
-import org.junit.jupiter.api.Test;
-
-import static io.github.cjstehno.trample.stomp.ParserMode.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-class ParserModeTest {
-
-    // TODO: more testing
-
-    @Test void allowingFrame() {
-        val frame = new ConnectedFrame();
-
-        assertTrue(ALL.allowsFrame(frame));
-        assertTrue(SERVER.allowsFrame(frame));
-        assertFalse(CLIENT.allowsFrame(frame));
-    }
+// FIXME: this is the high-level client with methods for the various client features
+public class TrampleClient {
 }

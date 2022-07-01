@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cjstehno.trample.stomp;
+package io.github.cjstehno.trample.parser;
 
+import io.github.cjstehno.trample.stomp.ConnectedFrame;
+import io.github.cjstehno.trample.parser.StompParser;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 

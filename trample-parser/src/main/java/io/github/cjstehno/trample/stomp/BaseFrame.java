@@ -15,26 +15,30 @@
  */
 package io.github.cjstehno.trample.stomp;
 
+import io.github.cjstehno.trample.parser.StompParser;
 import lombok.*;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static lombok.AccessLevel.PACKAGE;
 
 @RequiredArgsConstructor(access = PACKAGE) @ToString @EqualsAndHashCode
-abstract class BaseFrame {
-
-    // FIXME: provide other headers (names at least)
-    // FIXME: test each frame type reading and writing
+public abstract class BaseFrame {
 
     @Getter private final String command;
     @Getter private final Map<String, String> headers = new LinkedHashMap<>();
     @Getter(PACKAGE) @Setter(PACKAGE) private String body = "";
 
+    // NOTE: only first value of duplicate header is stored
     public void setHeader(final String name, final String value) {
-        headers.put(name, value);
+        if (!headers.containsKey(name)) {
+            headers.put(name, value);
+        }
     }
 
     public String getHeader(final String name) {
@@ -42,11 +46,12 @@ abstract class BaseFrame {
     }
 
     public interface ClientFrame {
-        // FIXME: userful?
+        // TODO: could these markers be done with annotations?
+        // This is just a marker.
     }
 
     public interface ServerFrame {
-        // FIXME: userful?
+        // This is just a marker
     }
 
     // NOTE: the command line is not parsed (it was already done by the parser)

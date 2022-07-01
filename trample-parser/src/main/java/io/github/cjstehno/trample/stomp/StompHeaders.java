@@ -27,4 +27,9 @@ public interface StompHeaders {
     String TRANSACTION = "transaction";
     String CONTENT_TYPE = "content-type";
     String CONTENT_LENGTH = "content-length";
+    String LOGIN = "login";
+    String PASSCODE = "passcode";
+    String HEART_BEAT = "heart-beat";
+    String SESSION = "session";
+    String SERVER = "server";
 }
