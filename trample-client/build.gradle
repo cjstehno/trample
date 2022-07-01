@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
     // production
+    implementation project(':trample-parser')
     
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
